@@ -10,6 +10,7 @@ import {readStdin} from './lib/readStdin';
 import {set} from './set';
 import {remove} from './remove';
 import {exec} from './exec';
+import {initSdkProfile} from './lib/initSdkProfile';
 
 const profileOption = new Option(
   '--profile [profile]',
@@ -19,7 +20,7 @@ const regionOption = new Option('--region [region]', 'AWS region');
 
 const initSdk = (profile?: string, region?: string) => {
   if (typeof profile === 'string') {
-    AWS.config.credentials = new AWS.SharedIniFileCredentials({profile});
+    initSdkProfile(profile);
   } else if (
     process.env.AWS_ACCESS_KEY_ID &&
     process.env.AWS_SECRET_ACCESS_KEY
