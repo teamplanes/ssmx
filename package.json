@@ -1,10 +1,43 @@
 {
   "name": "ssmx",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
   "license": "MIT",
+  "bin": {
+    "ssmx": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "type-check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint ./src --ext=.ts",
+    "build": "tsup src/index.ts src/cli.ts src/run-sync.ts --clean --dts=src/index.ts",
+    "try": "./dist/cli.js",
+    "prepublishOnly": "yarn build"
+  },
+  "eslintConfig": {
+    "extends": "planes/node"
+  },
+  "author": {
+    "name": "Henry Kirkness",
+    "email": "henry@planes.studio",
+    "url": "https://planes.studio"
+  },
+  "prettier": "prettier-config-planes",
   "devDependencies": {
+    "@types/node": "^14.14.35",
+    "eslint": "7.2.0",
+    "eslint-config-planes": "1.11.0",
+    "prettier-config-planes": "^1.0.1",
     "tsup": "^4.8.19",
     "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.870.0",
+    "commander": "^7.2.0",
+    "dotenv": "^8.2.0",
+    "execa": "^5.0.0"
   }
 }
