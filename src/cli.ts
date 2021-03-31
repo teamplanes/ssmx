@@ -19,15 +19,22 @@ const profileOption = new Option(
 const regionOption = new Option('--region [region]', 'AWS region');
 
 const initSdk = (profile?: string, region?: string) => {
-  if (typeof profile === 'string') {
+  if (profile) {
     initSdkProfile(profile);
-  } else if (
-    process.env.AWS_ACCESS_KEY_ID &&
-    process.env.AWS_SECRET_ACCESS_KEY
+  }
+
+  const hasEnv =
+    process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
+
+  if (
+    // Tried to set profile, but failed, but does still have keys in env
+    (profile && !AWS.config.credentials?.secretAccessKey && hasEnv) ||
+    // Didn't try to set profile and has it in env
+    (!profile && hasEnv)
   ) {
     AWS.config.credentials = {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
     };
   }
 
