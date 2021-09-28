@@ -17,8 +17,9 @@ const methods: Record<string, (...args: any[]) => Promise<any>> = {
 const args = JSON.parse(readStdin());
 AWS.config.region = args.region;
 AWS.config.credentials = {
-  accessKeyId: args.credentials.accessKeyId,
-  secretAccessKey: args.credentials.secretAccessKey,
+  accessKeyId: args.credentials.accessKeyId || process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey:
+    args.credentials.secretAccessKey || process.env.AWS_SECRET_ACCESS_KEY,
 };
 const method = methods[args.method];
 method(...args.params)
