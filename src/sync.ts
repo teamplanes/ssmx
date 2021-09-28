@@ -5,8 +5,15 @@ import {get} from './get';
 import {remove} from './remove';
 import {set} from './set';
 
+interface SyncParams {
+  processEnv?: Record<string, any>;
+}
+
 const runSync = (method: string, params: any[]) => {
+  const options: SyncParams =
+    params.length > 0 ? params[params.length - 1] : {};
   const out = execa.sync(`${__dirname}/run-sync.js`, {
+    ...(options.processEnv ? {env: options.processEnv} : {}),
     input: JSON.stringify({
       method,
       params,
@@ -25,11 +32,18 @@ const runSync = (method: string, params: any[]) => {
   }
 };
 
+type GetParams = Parameters<typeof get>;
+type SetParams = Parameters<typeof set>;
+type RemoveParams = Parameters<typeof remove>;
+type ExecParams = Parameters<typeof exec>;
+
 export const sync = {
-  get: (...params: Parameters<typeof get>): Record<string, string> =>
-    runSync('get', params),
-  set: (...params: Parameters<typeof set>): void => runSync('set', params),
-  remove: (...params: Parameters<typeof remove>): void =>
-    runSync('remove', params),
-  exec: (...params: Parameters<typeof exec>): void => runSync('exec', params),
+  get: (opts: GetParams[0] & SyncParams): Record<string, string> =>
+    runSync('get', [opts]),
+  set: (params: SetParams[0], opts: SyncParams & SetParams[1]): void =>
+    runSync('set', [params, opts]),
+  remove: (name: RemoveParams[0], opts: SyncParams & RemoveParams[1]): void =>
+    runSync('remove', [name, opts]),
+  exec: (command: ExecParams[0], opts: SyncParams & ExecParams[1]): void =>
+    runSync('exec', [command, opts]),
 };
